@@ -8,7 +8,7 @@
 
   <groupId>org.eclipse.cft.server</groupId>
   <artifactId>org.eclipse.cft.server.parent</artifactId>
-  <version>0.9.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <scm>
@@ -73,7 +73,7 @@
 	<signing.key.password>${KEY_PASSWORD}</signing.key.password>
 
     <dist.name>Cloud Foundry Tools</dist.name>
-    <dist.project>cloudfoundry</dist.project>
+    <dist.project>cft</dist.project>
     <dist.key>TOOLS</dist.key>
     <dist.target.classifier>cloudfoundry-${dist.target}</dist.target.classifier>
 
@@ -138,8 +138,11 @@
       </activation>
       <properties>
         <test.vmargs>-Dhttp.proxyHost=proxy.eng.vmware.com -Dhttp.proxyPort=3128 -Dhttps.proxyHost=proxy.eng.vmware.com -Dhttps.proxyPort=3128 ${test.osvmargs}</test.vmargs>
+        <!--
         <p2.qualifier>CI-B${bamboo.buildNumber}</p2.qualifier>
         <p2.replaceQualifier>true</p2.replaceQualifier>
+        -->
+        
       </properties>
     </profile>
 
@@ -317,7 +320,7 @@
               <artifact>
                 <groupId>org.eclipse.cft.server</groupId>
                 <artifactId>org.eclipse.cft.server.target</artifactId>
-                <version>0.9.0-SNAPSHOT</version>
+                <version>1.0.0-SNAPSHOT</version>
                 <classifier>${dist.target.classifier}</classifier>
               </artifact>
             </target>
@@ -362,7 +365,7 @@
           <artifactId>tycho-packaging-plugin</artifactId>
           <version>${tycho-version}</version>
           <configuration>
-            <format>yyyyMMddHHmm-'${p2.qualifier}'</format>
+            <format>'v'yyyyMMddHHmm</format>
             <archiveSite>true</archiveSite>
             <archive>
               <manifestEntries>

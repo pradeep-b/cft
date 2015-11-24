@@ -39,11 +39,15 @@ import org.eclipse.wst.server.core.model.IModuleResource;
  * an archiving mechanism that is specific to Java standalone applications.
  * 
  */
-public class StandaloneApplicationDelegate extends
-		ModuleResourceApplicationDelegate {
+public class StandaloneApplicationDelegate extends ModuleResourceApplicationDelegate {
 
 	public StandaloneApplicationDelegate() {
 
+	}
+
+	@Override
+	public boolean shouldSetDefaultUrl(CloudFoundryApplicationModule appModule) {
+		return CloudFoundryProjectUtil.isSpringBoot(appModule);
 	}
 
 	public boolean requiresURL() {
@@ -51,11 +55,6 @@ public class StandaloneApplicationDelegate extends
 		return false;
 	}
 
-	@Override
-	public boolean shouldSetDefaultUrl(CloudFoundryApplicationModule appModule) {
-		return CloudFoundryProjectUtil.isSpringBoot(appModule);
-	}
-	
 	@Override
 	public IStatus validateDeploymentInfo(ApplicationDeploymentInfo deploymentInfo) {
 
@@ -79,12 +78,10 @@ public class StandaloneApplicationDelegate extends
 	 * org.eclipse.cft.server.core.internal.CloudFoundryServer,
 	 * org.eclipse.wst.server.core.model.IModuleResource[])
 	 */
-	public ApplicationArchive getApplicationArchive(
-			CloudFoundryApplicationModule appModule,
-			CloudFoundryServer cloudServer, IModuleResource[] moduleResources,
-			IProgressMonitor monitor) throws CoreException {
-		ICloudFoundryArchiver archiver = CloudFoundryArchiverRegistry.INSTANCE
-				.createArchiver(appModule, cloudServer);
+	public ApplicationArchive getApplicationArchive(CloudFoundryApplicationModule appModule,
+			CloudFoundryServer cloudServer, IModuleResource[] moduleResources, IProgressMonitor monitor)
+					throws CoreException {
+		ICloudFoundryArchiver archiver = CloudFoundryArchiverRegistry.INSTANCE.createArchiver(appModule, cloudServer);
 		return archiver.getApplicationArchive(monitor);
 	}
 

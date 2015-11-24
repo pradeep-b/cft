@@ -30,10 +30,12 @@ import org.eclipse.cft.server.core.internal.ServerEventHandler;
 import org.eclipse.cft.server.core.internal.application.ModuleChangeEvent;
 import org.eclipse.cft.server.core.internal.client.CloudFoundryApplicationModule;
 import org.eclipse.cft.server.core.internal.client.DeploymentConfiguration;
+import org.eclipse.cft.server.core.internal.debug.ApplicationDebugLauncher;
 import org.eclipse.cft.server.core.internal.jrebel.CloudRebelAppHandler;
 import org.eclipse.cft.server.core.internal.log.CloudLog;
 import org.eclipse.cft.server.ui.internal.console.ConsoleManagerRegistry;
 import org.eclipse.cft.server.ui.internal.console.StandardLogContentType;
+import org.eclipse.cft.server.ui.internal.debug.ApplicationDebugUILauncher;
 import org.eclipse.cft.server.ui.internal.wizards.CloudFoundryCredentialsWizard;
 import org.eclipse.cft.server.ui.internal.wizards.DeleteServicesWizard;
 import org.eclipse.core.runtime.CoreException;
@@ -48,7 +50,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * @author Christian Dupuis
@@ -217,25 +218,41 @@ public class CloudFoundryUiCallback extends CloudFoundryCallback {
 
 			CloudFoundryPlugin.log(status);
 
-			UIJob job = new UIJob(Messages.CloudFoundryUiCallback_JOB_CF_ERROR) {
-				public IStatus runInUIThread(IProgressMonitor monitor) {
+			Display.getDefault().asyncExec(new Runnable() {
+
+				@Override
+				public void run() {
 					Shell shell = CloudUiUtil.getShell();
 					if (shell != null) {
-						new MessageDialog(shell, Messages.CloudFoundryUiCallback_ERROR_CALLBACK_TITLE, null,
-								status.getMessage(), MessageDialog.ERROR, new String[] { Messages.COMMONTXT_OK }, 0)
-										.open();
+						MessageDialog.openError(shell, Messages.CloudFoundryUiCallback_ERROR_CALLBACK_TITLE,
+								status.getMessage());
 					}
-					return Status.OK_STATUS;
 				}
-			};
-			job.setSystem(true);
-			job.schedule();
-
+			});
 		}
+	}
+
+	public boolean prompt(final String title, final String message) {
+		final boolean[] shouldContinue = new boolean[] { false };
+		Display.getDefault().syncExec(new Runnable() {
+
+			public void run() {
+
+				Shell shell = CloudUiUtil.getShell();
+				if (shell != null) {
+					shouldContinue[0] = MessageDialog.openConfirm(shell, title, message);
+				}
+			}
+		});
+		return shouldContinue[0];
 	}
 
 	public CloudRebelAppHandler getJRebelHandler() {
 		CloudRebelAppHandler handler = new CloudRebelUIHandler();
 		return handler;
+	}
+
+	public ApplicationDebugLauncher getDebugLauncher(CloudFoundryServer cloudServer) {
+		return new ApplicationDebugUILauncher();
 	}
 }

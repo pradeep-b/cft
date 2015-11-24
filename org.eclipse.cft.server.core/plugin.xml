@@ -40,10 +40,20 @@
   <extension
         point="org.eclipse.debug.core.launchConfigurationTypes">
      <launchConfigurationType
-           delegate="org.eclipse.cft.server.core.internal.debug.CloudFoundryDebuggingLaunchConfigDelegate"
-           id="org.eclipse.cft.launchconfig.debug"
+           delegate="org.eclipse.cft.server.core.internal.debug.NgrokDebugLaunchConfigDelegate"
+           id="org.eclipse.cft.debug.launchconfig.ngrok"
            modes="debug"
-           name="Cloud Foundry"
+           name="Cloud Foundry - Ngrok"
+           public="false">
+     </launchConfigurationType>
+  </extension>
+    <extension
+        point="org.eclipse.debug.core.launchConfigurationTypes">
+     <launchConfigurationType
+           delegate="org.eclipse.cft.server.core.internal.debug.SshDebugLaunchConfigDelegate"
+           id="org.eclipse.cft.debug.launchconfig.ssh"
+           modes="debug"
+           name="Cloud Foundry - SSH"
            public="false">
      </launchConfigurationType>
   </extension>
@@ -60,6 +70,20 @@
            class="org.eclipse.cft.server.core.internal.application.JavaWebApplicationDelegate"
            priority="Low"
            providerID="org.eclipse.cft.server.application.javaweb">
+        <moduleID
+              id="grails.app">
+        </moduleID>
+        <moduleID
+              id="jst.web">
+        </moduleID>
+     </applicationDelegate>
+  </extension>
+  <extension
+        point="org.eclipse.cft.server.core.application">
+     <applicationDelegate
+           class="org.eclipse.cft.server.core.internal.pivotal.PivotalJavaWebApplicationDelegate"
+           priority="Low"
+           providerID="org.eclipse.cft.server.application.javaweb.pivotal">
         <moduleID
               id="grails.app">
         </moduleID>
